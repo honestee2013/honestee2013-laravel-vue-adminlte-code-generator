@@ -40,6 +40,13 @@ class SchoolController extends Controller
         }
         $this->authorize('isAdmin');
 
+        if(Str::plural($request->query('all', ''))){
+            $result = School::all();
+            return $this->sendResponse($result, 'Schools list ');
+        }
+
+
+
         $page = $request->query('page', 1);
         $perPage = $request->query('perPage', '5');
         $sortType = $request->query('sortType', 'asc');
@@ -49,6 +56,8 @@ class SchoolController extends Controller
         $model = "App\Models\Honestee\VueCodeGen\\".ucfirst($request->query('pv_tbl', ''));
         $model_id = $request->query('pv_id', '');
         $relation = Str::plural($request->query('tbl', ''));
+
+
 
         if($model_id && $relation ){ // Many to Many relationships
             $query = $model::find($model_id)->{$relation}();
@@ -125,7 +134,7 @@ class SchoolController extends Controller
         } else {
             $this->checkValidation($request);
             $school = School::create($request->all());    
-            return $this->sendResponse($query, 'School Created Successfully');
+            return $this->sendResponse( $school, 'School Created Successfully');
         }
 
 
@@ -143,7 +152,7 @@ class SchoolController extends Controller
             $max = (isset($matches[0][0])) ? (int)$matches[0][0] : false;
             $required = ($column->Null == 'NO') ? true : false ;
             if($required && $max && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
-                $validationInfo[$column->Field] = 'required|max:'.$max;
+                $validationInfo[$column->Field] = 'required';
             else if($required && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
                 $validationInfo[$column->Field] = 'required';
 
@@ -211,9 +220,9 @@ class SchoolController extends Controller
             $query = $model::find($model_id)->{$relation}()->detach( $pv_ids );
             return $this->sendResponse($query, ucfirst($relation)." were detached from the ".ucfirst( $data['pv_tbl'] )." Successfully");
         } else {
-            $idsArray = json_decode($idsStr,true);
+            $idsArray = json_decode($parameters,true);
             School::whereIn('id', $idsArray)->delete();
-            return $this->sendResponse($idsStr, "The record was deleted successfully.");
+            return $this->sendResponse($idsArray, "The record was deleted successfully.");
         }
     }
 

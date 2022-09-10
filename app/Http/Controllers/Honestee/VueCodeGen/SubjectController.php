@@ -9,14 +9,14 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Schema;
 
-use App\Models\Honestee\VueCodeGen\RoleUser;
+use App\Models\Honestee\VueCodeGen\Subject;
 
 
 use DB;
 use Str;
 
 
-class RoleUserController extends Controller
+class SubjectController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -53,18 +53,18 @@ class RoleUserController extends Controller
         if($model_id && $relation ){ // Many to Many relationships
             $query = $model::find($model_id)->{$relation}();
         } else {
-            $query = RoleUser::query();
+            $query = Subject::query();
         }
 
         if($request['searchTerm'])
             $query = $this->search($request, $query);
         
         if($sortField)
-            $role_user = $query->orderBy($sortField, $sortType)->paginate( $perPage );
+            $subjects = $query->orderBy($sortField, $sortType)->paginate( $perPage );
         else       
-            $role_user = $query->paginate( $perPage );
+            $subjects = $query->paginate( $perPage );
   
-        return $this->sendResponse($role_user, 'role_user list ');
+        return $this->sendResponse($subjects, 'Subjects list ');
     }
 
 
@@ -75,7 +75,7 @@ class RoleUserController extends Controller
         }
         $this->authorize('isAdmin');
 
-        $fields = Schema::getColumnListing('$role_user');
+        $fields = Schema::getColumnListing('$subjects');
         foreach( $fields as $field) {
             $query = $query->orWhere($field, 'LIKE', '%'.$request['searchTerm']. '%');
         }
@@ -124,8 +124,8 @@ class RoleUserController extends Controller
             return $this->sendResponse($query, ucfirst($relation)." were attached to the ".ucfirst($request->query('pv_tbl', '')." Successfully"));
         } else {
             $this->checkValidation($request);
-            $roleuser = RoleUser::create($request->all());    
-            return $this->sendResponse($query, 'RoleUser Created Successfully');
+            $subject = Subject::create($request->all());    
+            return $this->sendResponse( $subject, 'Subject Created Successfully');
         }
 
 
@@ -134,7 +134,7 @@ class RoleUserController extends Controller
 
 
     public function checkValidation(Request $request){
-        $data = DB::select('DESCRIBE '.strtolower( 'role_user' ));
+        $data = DB::select('DESCRIBE '.strtolower( 'Subjects' ));
         $validationInfo = array();
 
         foreach($data as $column){  // First array element as  Require field definition 
@@ -143,7 +143,7 @@ class RoleUserController extends Controller
             $max = (isset($matches[0][0])) ? (int)$matches[0][0] : false;
             $required = ($column->Null == 'NO') ? true : false ;
             if($required && $max && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
-                $validationInfo[$column->Field] = 'required|max:'.$max;
+                $validationInfo[$column->Field] = 'required';
             else if($required && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
                 $validationInfo[$column->Field] = 'required';
 
@@ -182,10 +182,10 @@ class RoleUserController extends Controller
     public function update(Request $request, $id)
     {
         $this->checkValidation($request);
-        $roleuser = RoleUser::findOrFail($id);
+        $subject = Subject::findOrFail($id);
         $input = $request->all();
-        $roleuser->fill($input)->save();
-        return $this->sendResponse($roleuser, 'RoleUser Information has been updated');
+        $subject->fill($input)->save();
+        return $this->sendResponse($subject, 'Subject Information has been updated');
     }
 
     /**
@@ -211,9 +211,9 @@ class RoleUserController extends Controller
             $query = $model::find($model_id)->{$relation}()->detach( $pv_ids );
             return $this->sendResponse($query, ucfirst($relation)." were detached from the ".ucfirst( $data['pv_tbl'] )." Successfully");
         } else {
-            $idsArray = json_decode($idsStr,true);
-            RoleUser::whereIn('id', $idsArray)->delete();
-            return $this->sendResponse($idsStr, "The record was deleted successfully.");
+            $idsArray = json_decode($parameters,true);
+            Subject::whereIn('id', $idsArray)->delete();
+            return $this->sendResponse($idsArray, "The record was deleted successfully.");
         }
     }
 

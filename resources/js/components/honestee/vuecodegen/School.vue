@@ -21,15 +21,23 @@
                   <table class="table table-bordered" style="width: 100%; ">
                         <thead>
                             <tr>
-                                                                                                                                                                                                                                                                                          <th>Name</th>
-                                                                                                                                <th>User Id</th>
-                                                                                          </tr>   
+                                                                                                                                                              <th>Name</th>
+                                                                                                                                <th>Address</th>
+                                                                                                                                <th>Phone No 1</th>
+                                                                                                                                <th>Phone No 2</th>
+                                                                                                                                <th>Email 1</th>
+                                                                                                                                <th>Email 2</th>
+                                                                                                                                                                                                                      </tr>   
                         </thead>
                         <tbody >
                             <tr v-for="(school, index) in schools" :key="school.id">
-                                                                                                                                                                                                                                                                                                                      <td>{{ school.name }} </td>
-                                                                                                                                              <td>{{ school.user_id }} </td>
-                                                                                                </tr>
+                                                                                                                                                                              <td>{{ school.name }} </td>
+                                                                                                                                              <td>{{ school.address }} </td>
+                                                                                                                                              <td>{{ school.phone_no_1 }} </td>
+                                                                                                                                              <td>{{ school.phone_no_2 }} </td>
+                                                                                                                                              <td>{{ school.email_1 }} </td>
+                                                                                                                                              <td>{{ school.email_2 }} </td>
+                                                                                                                                                                                                                                        </tr>
                         </tbody>
                   </table>
                 </div>
@@ -196,6 +204,36 @@
                               
                                                           </div>
                                                       <div class="form-group">
+                                                                <label>Name</label>
+                                  <input type="text" v-model="form.name" name="name" class="form-control" :class="{ 'is-invalid': form.errors.has( 'name' ) }"  maxlength="255" >
+                                                                        <has-error :form="form" field="name"></has-error>
+                                                                                            </div>
+                                                      <div class="form-group">
+                                                                <label>Address</label>
+                                  <textarea v-model="form.address"  :class="{ 'is-invalid': form.errors.has( 'address' ) }" class="form-control" style="min-height: 100px; max-height: 300px;"></textarea>
+                                                                        <has-error :form="form" field="address"></has-error>
+                                                                                            </div>
+                                                      <div class="form-group">
+                                                                <label>Phone no 1</label>
+                                  <input type="text" v-model="form.phone_no_1" name="phone_no_1" class="form-control" :class="{ 'is-invalid': form.errors.has( 'phone_no_1' ) }"  maxlength="255" >
+                                                                        <has-error :form="form" field="phone_no_1"></has-error>
+                                                                                            </div>
+                                                      <div class="form-group">
+                                                                <label>Phone no 2</label>
+                                  <input type="text" v-model="form.phone_no_2" name="phone_no_2" class="form-control" :class="{ 'is-invalid': form.errors.has( 'phone_no_2' ) }"  maxlength="255" >
+                                                                        <has-error :form="form" field="phone_no_2"></has-error>
+                                                                                            </div>
+                                                      <div class="form-group">
+                                                                <label>Email 1</label>
+                                  <input type="text" v-model="form.email_1" name="email_1" class="form-control" :class="{ 'is-invalid': form.errors.has( 'email_1' ) }"  maxlength="255" >
+                                                                        <has-error :form="form" field="email_1"></has-error>
+                                                                                            </div>
+                                                      <div class="form-group">
+                                                                <label>Email 2</label>
+                                  <input type="text" v-model="form.email_2" name="email_2" class="form-control" :class="{ 'is-invalid': form.errors.has( 'email_2' ) }"  maxlength="255" >
+                                                                        <has-error :form="form" field="email_2"></has-error>
+                                                                                            </div>
+                                                      <div class="form-group">
                                  
                                   <input type="hidden" v-model="form.created_at"></input>
                               
@@ -204,19 +242,6 @@
                                  
                                   <input type="hidden" v-model="form.updated_at"></input>
                               
-                                                          </div>
-                                                      <div class="form-group">
-                                                                <label>Name</label>
-                                  <input type="text" v-model="form.name" name="name" class="form-control" :class="{ 'is-invalid': form.errors.has( 'name' ) }"  maxlength="255" >
-                                                                        <has-error :form="form" field="name"></has-error>
-                                                                                            </div>
-                                                      <div class="form-group">
-                                                                <label>User</label>
-                                  <select v-model="form.user_id" name="user_id" class="form-control" :class="{ 'is-invalid': form.errors.has( 'user_id' ) }">
-                                                                                <option value="5"> John Doe </option>
-                                                                        </select>
-                                                                        <has-error :form="form" field="user_id"></has-error>
-                                  
                                                           </div>
                                               </div><!-- Modal body ends -->
                     <div class="modal-footer">
@@ -282,15 +307,25 @@
                 clickedRow: null,
                 selectedRows: [],
 
+
+                                                                                                                                                                                                                                                                                                                                                    
                 serverParams: {
                   columnFilters: {
                   },
                   sort: [
-                                                                                                                                                                                                                  {"type" : "asc",
+                                                                                                                      {"type" : "asc",
                           "field" : "name"},
                                                                                                 {"type" : "asc",
-                          "field" : "user_id"},
-                                                                ],
+                          "field" : "address"},
+                                                                                                {"type" : "asc",
+                          "field" : "phone_no_1"},
+                                                                                                {"type" : "asc",
+                          "field" : "phone_no_2"},
+                                                                                                {"type" : "asc",
+                          "field" : "email_1"},
+                                                                                                {"type" : "asc",
+                          "field" : "email_2"},
+                                                                                                                                                            ],
                   page: 1, 
                   perPage: 5,
                   searchTerm: '',
@@ -298,33 +333,53 @@
                      
                 form: new Form({
                                         "id" : "",
+                                        "name" : "",
+                                        "address" : "",
+                                        "phone_no_1" : "",
+                                        "phone_no_2" : "",
+                                        "email_1" : "",
+                                        "email_2" : "",
                                         "created_at" : "",
                                         "updated_at" : "",
-                                        "name" : "",
-                                        "user_id" : "",
                                   }),
                 
                 table_heders: {
-                                                                                                                                                                              "Name" : "name",
-                                                                                "User Id" : "user_id",
-                                                      },
+                                                                                                  "Name" : "name",
+                                                                                "Address" : "address",
+                                                                                "Phone No 1" : "phone_no_1",
+                                                                                "Phone No 2" : "phone_no_2",
+                                                                                "Email 1" : "email_1",
+                                                                                "Email 2" : "email_2",
+                                                                                                                                  },
 
                 columns: [ 
                                         { label : "Id",
                       field : "id",
                                               hidden : true},
+                                                              { label : "Name",
+                      field : "name",
+                                              hidden : false},
+                                                              { label : "Address",
+                      field : "address",
+                                              hidden : false},
+                                                              { label : "Phone No 1",
+                      field : "phone_no_1",
+                                              hidden : false},
+                                                              { label : "Phone No 2",
+                      field : "phone_no_2",
+                                              hidden : false},
+                                                              { label : "Email 1",
+                      field : "email_1",
+                                              hidden : false},
+                                                              { label : "Email 2",
+                      field : "email_2",
+                                              hidden : false},
                                                               { label : "Created At",
                       field : "created_at",
                                               hidden : true},
                                                               { label : "Updated At",
                       field : "updated_at",
                                               hidden : true},
-                                                              { label : "Name",
-                      field : "name",
-                                              hidden : false},
-                                                              { label : "User Id",
-                      field : "user_id",
-                                              hidden : false},
                                         
                   {
                     label: 'Actions',
@@ -573,7 +628,12 @@
                     return false;
                    else
                     return true;
-            }
+            },
+
+      
+                                                                                                                                                                                                                                                                        
+
+
 
         },
 
@@ -582,7 +642,7 @@
             //console.log('School Component mounted.')
             this.$Progress.start();
             this.loadSchools();
-            this.$Progress.finish();
+                                                                                                                                                                                                                                                                                    this.$Progress.finish();
 
         },
 

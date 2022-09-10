@@ -22,12 +22,14 @@
                         <thead>
                             <tr>
                                                                                                                                                               <th>Name</th>
+                                                                                                                                <th>Display Name</th>
                                                                                                                                 <th>Description</th>
                                                                                                                                                                                                                       </tr>   
                         </thead>
                         <tbody >
                             <tr v-for="(role, index) in roles" :key="role.id">
                                                                                                                                                                               <td>{{ role.name }} </td>
+                                                                                                                                              <td>{{ role.display_name }} </td>
                                                                                                                                               <td>{{ role.description }} </td>
                                                                                                                                                                                                                                         </tr>
                         </tbody>
@@ -46,7 +48,7 @@
                 <!-- card header -->
                 <div class="card-header pr-sm-3">
                   <div class="d-flex mb-3">
-                    <h3 class="card-title mr-auto ">Role List</h3>
+                    <h3 class="card-title mr-auto ">Role List </h3>
                     <button type="button" class="btn btn-sm btn-primary " @click="newModal">
                         <i class="fa fa-plus-square"></i>
                         Add New
@@ -201,9 +203,12 @@
                                                                         <has-error :form="form" field="name"></has-error>
                                                                                             </div>
                                                       <div class="form-group">
+                                                                <label>Display name</label>
+                                  <input type="text" v-model="form.display_name" name="display_name" class="form-control" :class="{ 'is-invalid': form.errors.has( 'display_name' ) }"  maxlength="255" >
+                                                                                            </div>
+                                                      <div class="form-group">
                                                                 <label>Description</label>
                                   <input type="text" v-model="form.description" name="description" class="form-control" :class="{ 'is-invalid': form.errors.has( 'description' ) }"  maxlength="255" >
-                                                                        <has-error :form="form" field="description"></has-error>
                                                                                             </div>
                                                       <div class="form-group">
                                  
@@ -279,12 +284,16 @@
                 clickedRow: null,
                 selectedRows: [],
 
+
+                                                                                                                                                                                                                                        
                 serverParams: {
                   columnFilters: {
                   },
                   sort: [
                                                                                                                       {"type" : "asc",
                           "field" : "name"},
+                                                                                                {"type" : "asc",
+                          "field" : "display_name"},
                                                                                                 {"type" : "asc",
                           "field" : "description"},
                                                                                                                                                             ],
@@ -296,6 +305,7 @@
                 form: new Form({
                                         "id" : "",
                                         "name" : "",
+                                        "display_name" : "",
                                         "description" : "",
                                         "created_at" : "",
                                         "updated_at" : "",
@@ -303,6 +313,7 @@
                 
                 table_heders: {
                                                                                                   "Name" : "name",
+                                                                                "Display Name" : "display_name",
                                                                                 "Description" : "description",
                                                                                                                                   },
 
@@ -312,6 +323,9 @@
                                               hidden : true},
                                                               { label : "Name",
                       field : "name",
+                                              hidden : false},
+                                                              { label : "Display Name",
+                      field : "display_name",
                                               hidden : false},
                                                               { label : "Description",
                       field : "description",
@@ -570,7 +584,12 @@
                     return false;
                    else
                     return true;
-            }
+            },
+
+      
+                                                                                                                                                                                    
+
+
 
         },
 
@@ -579,7 +598,7 @@
             //console.log('Role Component mounted.')
             this.$Progress.start();
             this.loadRoles();
-            this.$Progress.finish();
+                                                                                                                                                                                                this.$Progress.finish();
 
         },
 

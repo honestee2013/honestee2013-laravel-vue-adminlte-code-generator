@@ -1,4 +1,4 @@
-<template> 
+<template>
   <section class="content">
         <!-- PDF Generator begins -->
         <html-pdf
@@ -7,7 +7,7 @@
             :enable-download="true"
             :preview-modal="true"
             :paginate-elements-by-height="14000"
-            filename="role_lists"
+            filename="department_lists"
             :pdf-quality="2"
             :manual-pagination="true"
             pdf-format="a4"
@@ -17,18 +17,16 @@
           >
               <section  id = "printPaper" slot="pdf-content" style=" width:100%; background-color: white;  padding: 0% 0.5% 40% 0.5%;">
                 <div style = "margin-left: 0; width: 100%; ">
-                  <h3 style="text-align:center; text-decoration: underline; padding: 1em; "> role Lists</h3>
+                  <h3 style="text-align:center; text-decoration: underline; padding: 1em; "> Department Lists</h3>
                   <table class="table table-bordered" style="width: 100%; ">
                         <thead>
                             <tr>
                                                                                                                                                               <th>Name</th>
-                                                                                                                                <th>Description</th>
                                                                                                                                                                                                                       </tr>   
                         </thead>
                         <tbody >
-                            <tr v-for="(role, index) in roles" :key="role.id">
-                                                                                                                                                                              <td>{{ role.name }} </td>
-                                                                                                                                              <td>{{ role.description }} </td>
+                            <tr v-for="(department, index) in departments" :key="department.id">
+                                                                                                                                                                              <td>{{ department.name }} </td>
                                                                                                                                                                                                                                         </tr>
                         </tbody>
                   </table>
@@ -46,11 +44,8 @@
                 <!-- card header -->
                 <div class="card-header pr-sm-3">
                   <div class="d-flex mb-3">
-                    <h3 class="card-title mr-auto ">
-                      User roles
-                    </h3>
-                    
-                    <button type="button" class="btn btn-sm btn-primary " @click="newModal" v-show="queryId">
+                    <h3 class="card-title mr-auto ">Department List </h3>
+                    <button type="button" class="btn btn-sm btn-primary " @click="newModal">
                         <i class="fa fa-plus-square"></i>
                         Add New
                     </button>
@@ -59,26 +54,8 @@
 
                 <!-- card-body table container -->
                 <div class="card-body table-responsive p-2"> 
-                    <div class="form-row mb-2">
-                        <div v-show="queryId" class="bg-light py-2 col-12 text-bold mb-2 pl-3" style="margin-top:-0.2em">
-                            Roles for <h5> {{selectedName}} </h5>
-                        </div>
-
-                        <div class="col">
-                            <select class="custom-select" v-model="queryId" @change="onQueryIdChanged($event, 'user' )">
-                              <option v-show = "(queryId==0)" selected value="0">Select user</option>
-                              <option v-if= "users" 
-                                      v-for = "row in users"  
-                                      :value="row.id+'_'+row.name"
-                                      :selected= "row.id == queryId"
-                                      >{{ row.name }}</option>
-                            </select>
-                        </div>
-
-                    </div>
-                    <!-- VUE GOOD TABLE BEGINS --> 
+                    <!-- VUE GOOD TABLE BEGINS -->  
                     <vue-good-table
-                      v-show="queryId"
                       mode="remote"
                       @on-page-change="onPageChange"
                       @on-sort-change="onSortChange"
@@ -102,11 +79,11 @@
                         enabled: true,
                         placeholder: 'Search the table',
                       }"
-                      :rows="userRoles"
+                      :rows="departments"
                       :columns="columns">
                           <!-- Vue Good TABLE CONTENTS and ACTIONS slot -->  
                           <div slot="table-actions">
-                              <!-- Button Groups for EXPORTING TABLE - ->  
+                              <!-- Button Groups for EXPORTING TABLE -->  
                               <div class="mr-auto btn-group my-1" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group" role="group">
                                   <button id="btnGroupDrop1" type="button" class="btn btn-default btn-sm " data-toggle="dropdown" aria-expanded="false">
@@ -117,8 +94,8 @@
                                         <i class="fa fa-print mr-1"></i> Print
                                     </button>  
                                       <button href="#" class="dropdown-item">
-                                        <!-- JSON_EXCEL Component - ->  
-                                        <json-excel class="" :data="roles" :fields="table_heders" worksheet="role List" name="role_lists.xls">
+                                        <!-- JSON_EXCEL Component -->  
+                                        <json-excel class="" :data="departments" :fields="table_heders" worksheet="Department Lits" name="department_lists.xls">
                                             <i class="fa fa-file-excel mr-1"></i> Excel
                                         </json-excel>
                                     </button>
@@ -128,6 +105,7 @@
                                   </div>
                                 </div>
                               </div>
+
                               <!-- Button Groups for SHOWING/HIDING Columns -->  
                               <div class="mr-auto btn-group my-1" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group" role="group">
@@ -144,23 +122,23 @@
                           </div><!-- Vue Good Table Action slot and contents ends --> 
                           
                           <div slot="emptystate">
-                            No role records found
+                            No {{$data['singular_lower']}} records found
                           </div>
 
                           <!-- Vue Good TABLE ACTION COLUMN options -->  
                           <template slot="table-row" slot-scope="props">
                             <span v-if="props.column.field == 'action'">
                               <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-primary"  @click="roleDetail(props)">Detail</button>
+                                <button type="button" class="btn btn-sm btn-primary"  @click="departmentDetail(props)">Detail</button>
                                 <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
                                   <span class="sr-only">Toggle Dropdown</span>
                                 </button>
 
                                 <div class="dropdown-menu">
-                                  <!--<a class="dropdown-item" href="#" @click="roleDetail('show')"><i class="fa fa-eye"> <span style="margin-left:0.1em"> Details </span> </i></a>
+                                  <!--<a class="dropdown-item" href="#" @click="departmentDetail('show')"><i class="fa fa-eye"> <span style="margin-left:0.1em"> Details </span> </i></a>
                                   <div class="dropdown-divider"></div>-->
-                                  <!--<a class="dropdown-item" href="#" @click="editModal(props.row)"><i class="fa fa-edit">  <span style="margin-left:0.1em"> Edit </span>  </i></a>-->
-                                  <a class="dropdown-item " href="#" @click="deleteUserRoles(props.row.id)"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Remove </span>  </i></a>
+                                  <a class="dropdown-item" href="#" @click="editModal(props.row)"><i class="fa fa-edit">  <span style="margin-left:0.1em"> Edit </span>  </i></a>
+                                  <a class="dropdown-item " href="#" @click="deleteDepartment(props.row.id)"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Delete </span>  </i></a>
                                 </div>
                               </div>
                             </span>
@@ -173,19 +151,18 @@
                           <div slot="selected-row-actions">
                               <div class="dropdown">
                                   <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                                    Selected roles
+                                    Selected Departments
                                   </button>
                                   <div class="dropdown-menu">
-                                    <a class="dropdown-item " href="#" @click="deleteSelectedRoles()"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Remove </span>  </i></a>
+                                    <a class="dropdown-item " href="#" @click="deleteSelectedDepartments()"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Delete </span>  </i></a>
                                   </div>
                                 </div>
                           </div>
                     </vue-good-table>
-
                 </div> <!-- card-body table container ends -->
 
                 <div class="card-footer">
-                    <!--<pagination :data="roles" @pagination-change-page="getResults"></pagination>-->
+                    <!--<pagination :data="departments" @pagination-change-page="getResults"></pagination>-->
                 </div>
               </div> <!-- /.card ends-->
           </div> <!-- /.row ends-->
@@ -201,46 +178,53 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header"> <!-- Modal Header -->
-                      <h5 class="modal-title" v-show="!editmode">Add roles</h5>
-                      <h5 class="modal-title" v-show="editmode">Update roles</h5>
+                      <h5 class="modal-title" v-show="!editmode">New Department</h5>
+                      <h5 class="modal-title" v-show="editmode">Update Department</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
 
                   <!-- <form @submit.prevent="createModel"> -->
-                  <form @submit.prevent="editmode ? updateUserRoles() : createUserRoles()">
+                  <form @submit.prevent="editmode ? updateDepartment() : createDepartment()">
                     <div class="modal-body">
-
-                        <div class="card border-light w-100" >
-                          <div class="card-header">
-                            Select roles for <h5> {{selectedName}} </h5>
-                          </div>
-                          <ul class="list-group list-group-flush">
-
-                            <li class="list-group-item bg-light">
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="select_all" v-on:change="onSelectAll()">
-                                <label class="form-check-label" for="select_all" > All roles </label>
-                              </div>
-                            </li> 
-                          
-                          
-                          
-                            <li v-for="row in roles" class="list-group-item">
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" :value="row.id" :id="row.id" v-model="checkedRoles">
-                                <label class="form-check-label" :for="row.id"> {{row.name}}</label>
-                              </div>
-                            </li>  
-                          </ul>
-                        </div>
-
-                    </div><!-- Modal body ends -->
+                                                    <div class="form-group">
+                                 
+                                  <input type="hidden" v-model="form.id"></input>
+                              
+                                                          </div>
+                                                      <div class="form-group">
+                                                                <label>Name</label>
+                                  <select v-model="form.name" name="name" class="form-control" :class="{ 'is-invalid': form.errors.has( 'name' ) }">
+                                                                                <option> Science </option>
+                                                                                <option> Art </option>
+                                                                                <option> Commerce </option>
+                                                                                <option> Mathematics </option>
+                                                                                <option> Languages </option>
+                                                                                <option> Humanities </option>
+                                                                                <option> Business Studies </option>
+                                                                                <option> Home Economics </option>
+                                                                                <option> Technical </option>
+                                                                                <option> Guidance &amp; Counselling </option>
+                                                                        </select>
+                                                                        <has-error :form="form" field="name"></has-error>
+                                                                                          
+                                                          </div>
+                                                      <div class="form-group">
+                                 
+                                  <input type="hidden" v-model="form.created_at"></input>
+                              
+                                                          </div>
+                                                      <div class="form-group">
+                                 
+                                  <input type="hidden" v-model="form.updated_at"></input>
+                              
+                                                          </div>
+                                              </div><!-- Modal body ends -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
-                        <button v-show="!editmode" type="submit" class="btn btn-primary"> OK </button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
                     </div>
                   </form> <!-- Form Ends -->
                 </div>
@@ -248,11 +232,11 @@
         </div>
 
         <!-- Detail Modal -->
-        <div class="modal fade" id="roleDetail" tabindex="-1" role="dialog" aria-labelledby="roleDetail" aria-hidden="true">
+        <div class="modal fade" id="departmentDetail" tabindex="-1" role="dialog" aria-labelledby="departmentDetail" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header"> <!-- Modal Header -->
-                        <h5 class="modal-title" > Role Detail</h5>
+                        <h5 class="modal-title" > Department Detail</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -267,10 +251,10 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" 
                         data-dismiss="modal" 
-                        @click="deleteUserRoles(clickedRow.id)"><i class="fa fa-trash"></i> Remove </button>
-                        <!--<button type="button" class="btn btn-primary" 
+                        @click="deleteDepartment(clickedRow.id)"><i class="fa fa-trash"></i> Delete </button>
+                        <button type="button" class="btn btn-primary" 
                         data-dismiss="modal" 
-                        @click="editModal(clickedRow)"><i class="fa fa-edit"></i> Edit</button>-->
+                        @click="editModal(clickedRow)"><i class="fa fa-edit"></i> Edit</button>
                         <button type="button" class="btn btn-primary" 
                         data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                                                           
@@ -292,21 +276,13 @@
         data () {
             return {
                 editmode: false,
-                userRoles : [],
-                roles : [],
-                users : [],
-                checkedRoles : [],
+                departments : [],
                 search : '',
-                selectAll: false,
 
                 isLoading: false,
                 totalRecords: 0,
                 clickedRow: null,
                 selectedRows: [],
-                selectedRows: [],
-                queryId: 0,
-                selectedName: "",
-                queryTable: "",
 
                 serverParams: {
                   columnFilters: {
@@ -314,8 +290,6 @@
                   sort: [
                                                                                                                       {"type" : "asc",
                           "field" : "name"},
-                                                                                                {"type" : "asc",
-                          "field" : "description"},
                                                                                                                                                             ],
                   page: 1, 
                   perPage: 5,
@@ -325,14 +299,12 @@
                 form: new Form({
                                         "id" : "",
                                         "name" : "",
-                                        "description" : "",
                                         "created_at" : "",
                                         "updated_at" : "",
                                   }),
                 
                 table_heders: {
                                                                                                   "Name" : "name",
-                                                                                "Description" : "description",
                                                                                                                                   },
 
                 columns: [ 
@@ -341,9 +313,6 @@
                                               hidden : true},
                                                               { label : "Name",
                       field : "name",
-                                              hidden : false},
-                                                              { label : "Description",
-                      field : "description",
                                               hidden : false},
                                                               { label : "Created At",
                       field : "created_at",
@@ -373,15 +342,15 @@
                                
         methods: {
 
-            roleDetail(params){
+            departmentDetail(params){
               this.clickedRow = params.row;
-              $('#roleDetail').modal('show');
+              $('#departmentDetail').modal('show');
             },
 
-            updateUserRoles(){
+            updateDepartment(){
                 this.$Progress.start();
                 // console.log('Editing data');
-                this.form.put("api/role-users/"+this.form.id)
+                this.form.put('api/departments/'+this.form.id)
                 .then((response) => {
                     // success
                     $('#addNew').modal('hide');
@@ -391,7 +360,7 @@
                     });
                     this.$Progress.finish();
                         //  Fire.$emit('AfterCreate');
-                    this.loadUserRoles();
+                    this.loadDepartments();
                 })
                 .catch(() => {
                     Toast.fire({
@@ -402,22 +371,20 @@
                 });
             },
 
-            editModal(role){
-                this.loadRoles();
+            editModal(department){
                 this.editmode = true;
                 this.form.reset();
                 $('#addNew').modal('show');
-                this.form.fill(role);
+                this.form.fill(department);
             },
 
             newModal(){
-                this.loadRoles();
                 this.editmode = false;
                 this.form.reset();
                 $('#addNew').modal('show');
             },
 
-            deleteUserRoles(id){
+            deleteDepartment(id){
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
@@ -428,22 +395,15 @@
                     }).then((result) => {
                         // Send request to the server
                          if (result.value) {
-   
-                              var parameters = new Object();
-                              parameters["tbl"] = "role";
-                              parameters["pv_tbl"] = this.queryTable;
-                              parameters["pv_id"] = this.queryId;
-                              parameters["pv_ids"] = id;//this.checkedRoles;
-                         
-                                //const theData = [id];
-                                axios.delete('api/role-users/'+JSON.stringify(parameters) ).then(()=>{
+                                const theData = [id];
+                                this.form.delete('api/departments/'+JSON.stringify(theData) ).then(()=>{
                                         Swal.fire(
                                         'Deleted!',
-                                        'The role was deleted successfully.',
+                                        'The department was deleted successfully.',
                                         'success'
                                         );
                                     // Fire.$emit('AfterCreate');
-                                    this.loadUserRoles();
+                                    this.loadDepartments();
                                 }).catch((data)=> {
                                   Swal.fire("Failed!", data.message, "warning");
                               });
@@ -451,10 +411,10 @@
                     })
             },
 
-            deleteSelectedRoles(){
+            deleteSelectedDepartments(){
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "Remove "+this.selectedRows.length+" records? You won't be able to revert this!",
+                    text: "Delete "+this.selectedRows.length+" records? You won't be able to revert this!",
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
@@ -462,24 +422,15 @@
                     }).then((result) => {
                         // Send request to the server
                          if (result.value) {
-
-                              var parameters = new Object();
-                              parameters["tbl"] = "role";
-                              parameters["pv_tbl"] = this.queryTable;
-                              parameters["pv_id"] = this.queryId;
-                              parameters["pv_ids"] = this.selectedRows;//this.checkedRoles;
-                         
-
-
-                                let theData = JSON.stringify( parameters );
-                                axios.delete("api/role-users/"+theData).then(()=>{
+                                let theData = JSON.stringify(this.selectedRows);
+                                this.form.delete('api/departments/'+theData).then(()=>{
                                         Swal.fire(
                                         'Deleted!',
-                                        'The role was deleted successfully.',
+                                        'The department was deleted successfully.',
                                         'success'
                                         );
                                     // Fire.$emit('AfterCreate');
-                                    this.loadUserRoles();
+                                    this.loadDepartments();
                                 }).catch((data)=> {
                                   Swal.fire("Failed!", data.message, "warning");
                               });
@@ -488,14 +439,8 @@
             },
             
 
-            createUserRoles(){
-                var parameters = "?tbl=role";
-                parameters = parameters + "&pv_tbl="+this.queryTable;
-                parameters = parameters + "&pv_id="+this.queryId;
-                parameters = parameters + "&pv_ids="+this.checkedRoles;
-                var url = "api/role-users"+parameters;
-                
-                axios.post(url)
+            createDepartment(){
+                this.form.post('api/departments')
                 .then((response)=>{
                     $('#addNew').modal('hide');
                     Toast.fire({
@@ -503,7 +448,7 @@
                           title: response.data.message
                     });
                     this.$Progress.finish();
-                    this.loadUserRoles();
+                    this.loadDepartments();
                 })
                 .catch(()=>{
                     Toast.fire({
@@ -511,17 +456,6 @@
                         title: 'Some error occured!'
                     });
                 })
-            },
-
-
-            onQueryIdChanged(event, table){
-              var selected = event.target.value;
-              this.queryId = selected.substring(0, selected.indexOf("_"));
-              this.selectedName = selected.substring(selected.indexOf("_") +1 );
-              this.queryTable = table;
-              this.$Progress.start();
-              this.loadUserRoles();
-              this.$Progress.finish();
             },
 
 
@@ -554,12 +488,12 @@
             
             onPageChange(params) {
               this.updateParams({page: params.currentPage});
-              this.loadUserRoles();
+              this.loadDepartments();
             },
 
             onPerPageChange(params) {
               this.updateParams({perPage: params.currentPerPage});
-              this.loadUserRoles();
+              this.loadDepartments();
             },
 
             onSortChange(params) {
@@ -572,34 +506,20 @@
                         field: params[0].field,
                     }],
                 });
-                this.loadUserRoles();
+                this.loadDepartments();
             },
 
 
             onColumnFilter(params) {
               this.updateParams(params);
-              this.loadUserRoles();
+              this.loadDepartments();
             },
             
 
             onSearch(params) {
               this.updateParams({searchTerm: params.searchTerm});
-              this.loadUserRoles();
-            },  
-            
-            
-            onSelectAll(){
-              this.selectAll = !this.selectAll;
-              if(this.selectAll){
-                  var ids = this.roles
-                    .map(function (data) { return data.id; });  
-                  this.checkedRoles = ids;
-              } else {
-                this.checkedRoles = [];
-              }                      
-              console.log(JSON.stringify(ids));
-              //checkedRoles;
-            },
+              this.loadDepartments();
+            },    
 
 
             toggleColumn( index, event ){
@@ -609,30 +529,20 @@
 
 
             // load items is what brings back the rows from server
-            loadUserRoles() {
-                if(!this.queryId)
-                  return;
-
+            loadDepartments() {
                 this.$Progress.start();
                 var parameters = "?perPage="+ this.serverParams.perPage;
                 parameters = parameters + "&page="+ this.serverParams.page;
                 parameters = parameters + "&sortField="+ this.serverParams.sort[0].field;
                 parameters = parameters + "&sortType="+ this.serverParams.sort[0].type;
                 parameters = parameters + "&searchTerm="+ this.serverParams.searchTerm;
-                parameters = parameters + "&tbl=role";
-                parameters = parameters + "&pv_tbl="+this.queryTable;
-                parameters = parameters + "&pv_id="+this.queryId;
-                var url = "api/role-users"+parameters;
+                var url = "api/departments"+parameters;
                 //console.log(JSON.stringify( url));
                 try{
-                    this.form.get( url ).then( roles  => {
-                        if(roles.data.data){
-                          this.totalRecords = roles.data.data.total
-                          this.userRoles = roles.data.data.data;
-                          this.checkedRoles 
-                            = this.userRoles
-                            .map(function (data) { return data.id; });                        
-
+                    this.form.get( url ).then( departments  => {
+                        if(departments.data.data){
+                          this.totalRecords = departments.data.data.total
+                          this.departments = departments.data.data.data;
                         }
                     });
                 } catch(error){
@@ -640,29 +550,6 @@
                 };
                 this.$Progress.finish();
             },
-
-
-
-            // load pivot_tables data
-            loadUsers() {
-              var url = "api/users";
-              this.form.get( url ).then( users  => {
-                  if(users.data.data.data){
-                    this.users = users.data.data.data                  
-                  }
-              });
-            },
-
-
-             // load the table data
-             loadRoles() {
-              var url = "api/roles";
-              this.form.get( url ).then( roles  => {
-                  if(roles.data.data.data){
-                    this.roles = roles.data.data.data                  
-                  }
-              });
-            },           
 
 
             ucAllWords(words) {
@@ -676,7 +563,7 @@
 
 
             isSpecialColumn(field){
-              if(field != 'id' && field != 'updated_at' && field != 'created_at' && field != 'pivot'
+              if(field != 'id' && field != 'updated_at' && field != 'created_at' 
                    && field != 'vgt_id' && field != 'vgtSelected' && field != 'originalIndex' ) 
                     return false;
                    else
@@ -687,9 +574,9 @@
 
 
         mounted() {
-            //console.log('role Component mounted.')
+            //console.log('Department Component mounted.')
             this.$Progress.start();
-            this.loadUsers();
+            this.loadDepartments();
             this.$Progress.finish();
 
         },
@@ -697,7 +584,7 @@
 
         created() {
             this.$Progress.start();
-            //this.loadUserRoles();
+            this.loadDepartments();
             this.$Progress.finish();
             
         },

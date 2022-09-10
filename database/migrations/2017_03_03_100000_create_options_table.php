@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAccessmentSubjectTable extends Migration
+class CreateOptionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateAccessmentSubjectTable extends Migration
      */
     public function up()
     {
-        Schema::create('accessment_subject', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::create('options', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('key')->unique();
+            $table->json('value');
         });
     }
 
@@ -26,6 +27,6 @@ class CreateAccessmentSubjectTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accessment_subject');
+        Schema::dropIfExists('options');
     }
 }

@@ -14,11 +14,14 @@ class CreateSchoolsTable extends Migration
     public function up()
     {
         Schema::create('schools', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-             
+            $table->bigIncrements('id');
             $table->string("name");
-            $table->integer("user_id");
+            $table->text("address");
+            $table->string("phone_no_1");
+            $table->string("phone_no_2");
+            $table->string("email_1");
+            $table->string("email_2");
+            $table->timestamps();
         });
     }
 
@@ -31,4 +34,7 @@ class CreateSchoolsTable extends Migration
     {
         Schema::dropIfExists('schools');
     }
+
+
+
 }

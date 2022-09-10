@@ -20,5 +20,12 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductsTableSeeder::class);
         //duplicate product for data 
         $this->call(ProductsTableSeeder::class);
+        
+        //$this->call(LaratrustSeeder::class);
+        
+        $this->call(RolesAndPermissionsSeeder::class);
+        $this->call(SubjectSeeder::class);
+        $this->call(DepartmentSeeder::class);
+
     }
 }

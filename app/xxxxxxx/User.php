@@ -8,9 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use App\Models\Role;
+use Laratrust\Traits\LaratrustUserTrait;
 
 class User extends Authenticatable // implements MustVerifyEmail
 {
+    use LaratrustUserTrait;
     use HasFactory, Notifiable, HasApiTokens;
 
     /**

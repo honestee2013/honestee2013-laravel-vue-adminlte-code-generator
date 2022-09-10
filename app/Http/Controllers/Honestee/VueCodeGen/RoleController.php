@@ -40,6 +40,13 @@ class RoleController extends Controller
         }
         $this->authorize('isAdmin');
 
+        if(Str::plural($request->query('all', ''))){
+            $result = Role::all();
+            return $this->sendResponse($result, 'Roles list ');
+        }
+
+
+
         $page = $request->query('page', 1);
         $perPage = $request->query('perPage', '5');
         $sortType = $request->query('sortType', 'asc');
@@ -49,6 +56,8 @@ class RoleController extends Controller
         $model = "App\Models\Honestee\VueCodeGen\\".ucfirst($request->query('pv_tbl', ''));
         $model_id = $request->query('pv_id', '');
         $relation = Str::plural($request->query('tbl', ''));
+
+
 
         if($model_id && $relation ){ // Many to Many relationships
             $query = $model::find($model_id)->{$relation}();
@@ -113,10 +122,23 @@ class RoleController extends Controller
         //$user->tasks()->getRelatedIds(); // [1,2,3,4,5,6,7,8]
         // *****************************
 
-        $this->checkValidation($request);
-        $role = Role::create($request->all());    
-        return $this->sendResponse($role, 'Role Created Successfully');
-    }
+
+        $model = "App\Models\Honestee\VueCodeGen\\".ucfirst($request->query('pv_tbl', ''));
+        $model_id = $request->query('pv_id', '');
+        $pv_ids = $request->query('pv_ids', '');
+        $relation = Str::plural($request->query('tbl', ''));
+
+        if($model_id && $relation &&  $pv_ids){ // Many to Many relationships
+            $query = $model::find($model_id)->{$relation}()->sync( explode(",", $pv_ids) );
+            return $this->sendResponse($query, ucfirst($relation)." were attached to the ".ucfirst($request->query('pv_tbl', '')." Successfully"));
+        } else {
+            $this->checkValidation($request);
+            $role = Role::create($request->all());    
+            return $this->sendResponse( $role, 'Role Created Successfully');
+        }
+
+
+     }
 
 
 
@@ -130,7 +152,7 @@ class RoleController extends Controller
             $max = (isset($matches[0][0])) ? (int)$matches[0][0] : false;
             $required = ($column->Null == 'NO') ? true : false ;
             if($required && $max && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
-                $validationInfo[$column->Field] = 'required|max:'.$max;
+                $validationInfo[$column->Field] = 'required';
             else if($required && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
                 $validationInfo[$column->Field] = 'required';
 
@@ -181,11 +203,27 @@ class RoleController extends Controller
      * @param        int  $id
      * @return    \Illuminate\Http\Response
      */
-    public function destroy($idsStr)
+    public function destroy($parameters)
     {
-        $idsArray = json_decode($idsStr,true);
-        Role::whereIn('id', $idsArray)->delete();
-        return $this->sendResponse($idsStr, "The record was deleted successfully.");
+        $data = (array)json_decode($parameters);
+
+
+        if (array_key_exists('tbl', $data) && array_key_exists('pv_tbl', $data) 
+            && array_key_exists('pv_id', $data) && array_key_exists('pv_id', $data) ) 
+           { // Many to Many relationships
+        
+            $model = "App\Models\Honestee\VueCodeGen\\".ucfirst($data['pv_tbl']);
+            $model_id = $data['pv_id'];
+            $pv_ids = $data['pv_ids'];
+            $relation = Str::plural($data['tbl']);
+
+            $query = $model::find($model_id)->{$relation}()->detach( $pv_ids );
+            return $this->sendResponse($query, ucfirst($relation)." were detached from the ".ucfirst( $data['pv_tbl'] )." Successfully");
+        } else {
+            $idsArray = json_decode($parameters,true);
+            Role::whereIn('id', $idsArray)->delete();
+            return $this->sendResponse($idsArray, "The record was deleted successfully.");
+        }
     }
 
 

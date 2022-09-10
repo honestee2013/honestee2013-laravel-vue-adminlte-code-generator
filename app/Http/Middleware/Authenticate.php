@@ -1,8 +1,12 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+
+use Spatie\Multitenancy\Models\Tenant;
+use Illuminate\Support\Facades\Route;
+use Redirect;
+
 
 class Authenticate extends Middleware
 {
@@ -14,7 +18,10 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
+
         if (! $request->expectsJson()) {
+            //return Redirect::route("http://school1.localhost:8000");
+
             return route('login');
         }
     }

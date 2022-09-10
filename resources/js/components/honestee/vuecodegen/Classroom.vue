@@ -7,7 +7,7 @@
             :enable-download="true"
             :preview-modal="true"
             :paginate-elements-by-height="14000"
-            filename="post_lists"
+            filename="classroom_lists"
             :pdf-quality="2"
             :manual-pagination="true"
             pdf-format="a4"
@@ -17,15 +17,19 @@
           >
               <section  id = "printPaper" slot="pdf-content" style=" width:100%; background-color: white;  padding: 0% 0.5% 40% 0.5%;">
                 <div style = "margin-left: 0; width: 100%; ">
-                  <h3 style="text-align:center; text-decoration: underline; padding: 1em; "> Post Lists</h3>
+                  <h3 style="text-align:center; text-decoration: underline; padding: 1em; "> Classroom Lists</h3>
                   <table class="table table-bordered" style="width: 100%; ">
                         <thead>
                             <tr>
-                                                                                                                                                                                                                                                    </tr>   
+                                                                                                                                                              <th>Section Id</th>
+                                                                                                                                <th>Name</th>
+                                                                                                                                                                                                                      </tr>   
                         </thead>
                         <tbody >
-                            <tr v-for="(post, index) in posts" :key="post.id">
-                                                                                                                                                                                                                                                                        </tr>
+                            <tr v-for="(classroom, index) in classrooms" :key="classroom.id">
+                                                                                                                                                                              <td>{{ classroom.section_id }} </td>
+                                                                                                                                              <td>{{ classroom.name }} </td>
+                                                                                                                                                                                                                                        </tr>
                         </tbody>
                   </table>
                 </div>
@@ -42,7 +46,7 @@
                 <!-- card header -->
                 <div class="card-header pr-sm-3">
                   <div class="d-flex mb-3">
-                    <h3 class="card-title mr-auto ">Post List</h3>
+                    <h3 class="card-title mr-auto ">Classroom List </h3>
                     <button type="button" class="btn btn-sm btn-primary " @click="newModal">
                         <i class="fa fa-plus-square"></i>
                         Add New
@@ -77,7 +81,7 @@
                         enabled: true,
                         placeholder: 'Search the table',
                       }"
-                      :rows="posts"
+                      :rows="classrooms"
                       :columns="columns">
                           <!-- Vue Good TABLE CONTENTS and ACTIONS slot -->  
                           <div slot="table-actions">
@@ -93,7 +97,7 @@
                                     </button>  
                                       <button href="#" class="dropdown-item">
                                         <!-- JSON_EXCEL Component -->  
-                                        <json-excel class="" :data="posts" :fields="table_heders" worksheet="Post Lits" name="post_lists.xls">
+                                        <json-excel class="" :data="classrooms" :fields="table_heders" worksheet="Classroom Lits" name="classroom_lists.xls">
                                             <i class="fa fa-file-excel mr-1"></i> Excel
                                         </json-excel>
                                     </button>
@@ -127,16 +131,16 @@
                           <template slot="table-row" slot-scope="props">
                             <span v-if="props.column.field == 'action'">
                               <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-primary"  @click="postDetail(props)">Detail</button>
+                                <button type="button" class="btn btn-sm btn-primary"  @click="classroomDetail(props)">Detail</button>
                                 <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
                                   <span class="sr-only">Toggle Dropdown</span>
                                 </button>
 
                                 <div class="dropdown-menu">
-                                  <!--<a class="dropdown-item" href="#" @click="postDetail('show')"><i class="fa fa-eye"> <span style="margin-left:0.1em"> Details </span> </i></a>
+                                  <!--<a class="dropdown-item" href="#" @click="classroomDetail('show')"><i class="fa fa-eye"> <span style="margin-left:0.1em"> Details </span> </i></a>
                                   <div class="dropdown-divider"></div>-->
                                   <a class="dropdown-item" href="#" @click="editModal(props.row)"><i class="fa fa-edit">  <span style="margin-left:0.1em"> Edit </span>  </i></a>
-                                  <a class="dropdown-item " href="#" @click="deletePost(props.row.id)"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Delete </span>  </i></a>
+                                  <a class="dropdown-item " href="#" @click="deleteClassroom(props.row.id)"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Delete </span>  </i></a>
                                 </div>
                               </div>
                             </span>
@@ -149,10 +153,10 @@
                           <div slot="selected-row-actions">
                               <div class="dropdown">
                                   <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                                    Selected Posts
+                                    Selected Classrooms
                                   </button>
                                   <div class="dropdown-menu">
-                                    <a class="dropdown-item " href="#" @click="deleteSelectedPosts()"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Delete </span>  </i></a>
+                                    <a class="dropdown-item " href="#" @click="deleteSelectedClassrooms()"><i class="fa fa-trash">  <span style="margin-left:0.1em"> Delete </span>  </i></a>
                                   </div>
                                 </div>
                           </div>
@@ -160,7 +164,7 @@
                 </div> <!-- card-body table container ends -->
 
                 <div class="card-footer">
-                    <!--<pagination :data="posts" @pagination-change-page="getResults"></pagination>-->
+                    <!--<pagination :data="classrooms" @pagination-change-page="getResults"></pagination>-->
                 </div>
               </div> <!-- /.card ends-->
           </div> <!-- /.row ends-->
@@ -176,27 +180,45 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header"> <!-- Modal Header -->
-                      <h5 class="modal-title" v-show="!editmode">New Post</h5>
-                      <h5 class="modal-title" v-show="editmode">Update Post</h5>
+                      <h5 class="modal-title" v-show="!editmode">New Classroom</h5>
+                      <h5 class="modal-title" v-show="editmode">Update Classroom</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
 
                   <!-- <form @submit.prevent="createModel"> -->
-                  <form @submit.prevent="editmode ? updatePost() : createPost()">
+                  <form @submit.prevent="editmode ? updateClassroom() : createClassroom()">
                     <div class="modal-body">
                                                     <div class="form-group">
                                  
                                   <input type="hidden" v-model="form.id"></input>
+                              
                                                           </div>
+                                                      <div class="form-group">
+                                                                <label>Section</label>
+                                  <select v-model="form.section_id" name="section_id" class="form-control" 
+                                          :class="{ 'is-invalid': form.errors.has( 'section_id' ) }">
+                                      <option v-for="(item, index)  in sections"
+                                            :key= "index" :value="item.id"> {{item.name}} </option>
+                                  </select>
+                                                                        <has-error :form="form" field="section_id"></has-error>
+                                  
+                                                          </div>
+                                                      <div class="form-group">
+                                                                <label>Name</label>
+                                  <input type="text" v-model="form.name" name="name" class="form-control" :class="{ 'is-invalid': form.errors.has( 'name' ) }"  maxlength="255" >
+                                                                        <has-error :form="form" field="name"></has-error>
+                                                                                            </div>
                                                       <div class="form-group">
                                  
                                   <input type="hidden" v-model="form.created_at"></input>
+                              
                                                           </div>
                                                       <div class="form-group">
                                  
                                   <input type="hidden" v-model="form.updated_at"></input>
+                              
                                                           </div>
                                               </div><!-- Modal body ends -->
                     <div class="modal-footer">
@@ -210,11 +232,11 @@
         </div>
 
         <!-- Detail Modal -->
-        <div class="modal fade" id="postDetail" tabindex="-1" role="dialog" aria-labelledby="postDetail" aria-hidden="true">
+        <div class="modal fade" id="classroomDetail" tabindex="-1" role="dialog" aria-labelledby="classroomDetail" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header"> <!-- Modal Header -->
-                        <h5 class="modal-title" > Post Detail</h5>
+                        <h5 class="modal-title" > Classroom Detail</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -229,7 +251,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" 
                         data-dismiss="modal" 
-                        @click="deletePost(clickedRow.id)"><i class="fa fa-trash"></i> Delete </button>
+                        @click="deleteClassroom(clickedRow.id)"><i class="fa fa-trash"></i> Delete </button>
                         <button type="button" class="btn btn-primary" 
                         data-dismiss="modal" 
                         @click="editModal(clickedRow)"><i class="fa fa-edit"></i> Edit</button>
@@ -254,7 +276,7 @@
         data () {
             return {
                 editmode: false,
-                posts : [],
+                classrooms : [],
                 search : '',
 
                 isLoading: false,
@@ -262,11 +284,18 @@
                 clickedRow: null,
                 selectedRows: [],
 
+
+                                                                                                sections: [],          
+                                                                                                                                                
                 serverParams: {
                   columnFilters: {
                   },
                   sort: [
-                                                                                                                                                                                  ],
+                                                                                                                      {"type" : "asc",
+                          "field" : "section_id"},
+                                                                                                {"type" : "asc",
+                          "field" : "name"},
+                                                                                                                                                            ],
                   page: 1, 
                   perPage: 5,
                   searchTerm: '',
@@ -274,17 +303,27 @@
                      
                 form: new Form({
                                         "id" : "",
+                                        "section_id" : "",
+                                        "name" : "",
                                         "created_at" : "",
                                         "updated_at" : "",
                                   }),
                 
                 table_heders: {
-                                                                                                                                                    },
+                                                                                                  "Section Id" : "section_id",
+                                                                                "Name" : "name",
+                                                                                                                                  },
 
                 columns: [ 
                                         { label : "Id",
                       field : "id",
                                               hidden : true},
+                                                              { label : "Section Id",
+                      field : "section_id",
+                                              hidden : false},
+                                                              { label : "Name",
+                      field : "name",
+                                              hidden : false},
                                                               { label : "Created At",
                       field : "created_at",
                                               hidden : true},
@@ -313,15 +352,15 @@
                                
         methods: {
 
-            postDetail(params){
+            classroomDetail(params){
               this.clickedRow = params.row;
-              $('#postDetail').modal('show');
+              $('#classroomDetail').modal('show');
             },
 
-            updatePost(){
+            updateClassroom(){
                 this.$Progress.start();
                 // console.log('Editing data');
-                this.form.put('api/post/'+this.form.id)
+                this.form.put('api/classrooms/'+this.form.id)
                 .then((response) => {
                     // success
                     $('#addNew').modal('hide');
@@ -331,7 +370,7 @@
                     });
                     this.$Progress.finish();
                         //  Fire.$emit('AfterCreate');
-                    this.loadPosts();
+                    this.loadClassrooms();
                 })
                 .catch(() => {
                     Toast.fire({
@@ -342,11 +381,11 @@
                 });
             },
 
-            editModal(post){
+            editModal(classroom){
                 this.editmode = true;
                 this.form.reset();
                 $('#addNew').modal('show');
-                this.form.fill(post);
+                this.form.fill(classroom);
             },
 
             newModal(){
@@ -355,7 +394,7 @@
                 $('#addNew').modal('show');
             },
 
-            deletePost(id){
+            deleteClassroom(id){
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
@@ -367,14 +406,14 @@
                         // Send request to the server
                          if (result.value) {
                                 const theData = [id];
-                                this.form.delete('api/post/'+JSON.stringify(theData) ).then(()=>{
+                                this.form.delete('api/classrooms/'+JSON.stringify(theData) ).then(()=>{
                                         Swal.fire(
                                         'Deleted!',
-                                        'The post was deleted successfully.',
+                                        'The classroom was deleted successfully.',
                                         'success'
                                         );
                                     // Fire.$emit('AfterCreate');
-                                    this.loadPosts();
+                                    this.loadClassrooms();
                                 }).catch((data)=> {
                                   Swal.fire("Failed!", data.message, "warning");
                               });
@@ -382,7 +421,7 @@
                     })
             },
 
-            deleteSelectedPosts(){
+            deleteSelectedClassrooms(){
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "Delete "+this.selectedRows.length+" records? You won't be able to revert this!",
@@ -394,14 +433,14 @@
                         // Send request to the server
                          if (result.value) {
                                 let theData = JSON.stringify(this.selectedRows);
-                                this.form.delete('api/post/'+theData).then(()=>{
+                                this.form.delete('api/classrooms/'+theData).then(()=>{
                                         Swal.fire(
                                         'Deleted!',
-                                        'The post was deleted successfully.',
+                                        'The classroom was deleted successfully.',
                                         'success'
                                         );
                                     // Fire.$emit('AfterCreate');
-                                    this.loadPosts();
+                                    this.loadClassrooms();
                                 }).catch((data)=> {
                                   Swal.fire("Failed!", data.message, "warning");
                               });
@@ -410,8 +449,8 @@
             },
             
 
-            createPost(){
-                this.form.post('api/post')
+            createClassroom(){
+                this.form.post('api/classrooms')
                 .then((response)=>{
                     $('#addNew').modal('hide');
                     Toast.fire({
@@ -419,7 +458,7 @@
                           title: response.data.message
                     });
                     this.$Progress.finish();
-                    this.loadPosts();
+                    this.loadClassrooms();
                 })
                 .catch(()=>{
                     Toast.fire({
@@ -459,12 +498,12 @@
             
             onPageChange(params) {
               this.updateParams({page: params.currentPage});
-              this.loadPosts();
+              this.loadClassrooms();
             },
 
             onPerPageChange(params) {
               this.updateParams({perPage: params.currentPerPage});
-              this.loadPosts();
+              this.loadClassrooms();
             },
 
             onSortChange(params) {
@@ -477,19 +516,19 @@
                         field: params[0].field,
                     }],
                 });
-                this.loadPosts();
+                this.loadClassrooms();
             },
 
 
             onColumnFilter(params) {
               this.updateParams(params);
-              this.loadPosts();
+              this.loadClassrooms();
             },
             
 
             onSearch(params) {
               this.updateParams({searchTerm: params.searchTerm});
-              this.loadPosts();
+              this.loadClassrooms();
             },    
 
 
@@ -500,20 +539,20 @@
 
 
             // load items is what brings back the rows from server
-            loadPosts() {
+            loadClassrooms() {
                 this.$Progress.start();
                 var parameters = "?perPage="+ this.serverParams.perPage;
                 parameters = parameters + "&page="+ this.serverParams.page;
                 parameters = parameters + "&sortField="+ this.serverParams.sort[0].field;
                 parameters = parameters + "&sortType="+ this.serverParams.sort[0].type;
                 parameters = parameters + "&searchTerm="+ this.serverParams.searchTerm;
-                var url = "api/post"+parameters;
+                var url = "api/classrooms"+parameters;
                 //console.log(JSON.stringify( url));
                 try{
-                    this.form.get( url ).then( post  => {
-                        if(post.data.data){
-                          this.totalRecords = post.data.data.total
-                          this.posts = post.data.data.data;
+                    this.form.get( url ).then( classrooms  => {
+                        if(classrooms.data.data){
+                          this.totalRecords = classrooms.data.data.total
+                          this.classrooms = classrooms.data.data.data;
                         }
                     });
                 } catch(error){
@@ -539,23 +578,44 @@
                     return false;
                    else
                     return true;
-            }
+            },
+
+      
+                                                                            loadSections(){
+
+
+                          try{
+                              var url = "api/sections";
+                              axios.get( url ).then( sections  => {
+                                  if(sections.data.data.data){
+                                    this.sections = sections.data.data.data;
+                                  }
+                              });
+                          } catch(error){
+                            console.log(error.message);
+                          };
+
+                    },
+                                                                                                                
+
+
 
         },
 
 
         mounted() {
-            //console.log('Post Component mounted.')
+            //console.log('Classroom Component mounted.')
             this.$Progress.start();
-            this.loadPosts();
-            this.$Progress.finish();
+            this.loadClassrooms();
+                                                                            this.loadSections();          
+                                                                                                                            this.$Progress.finish();
 
         },
 
 
         created() {
             this.$Progress.start();
-            this.loadPosts();
+            this.loadClassrooms();
             this.$Progress.finish();
             
         },

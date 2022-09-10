@@ -2,11 +2,17 @@
 namespace App\Models\Honestee\VueCodeGen;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Honestee\VueCodeGen\User;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 
-class Role extends Model
+//use Laratrust\Models\LaratrustRole;
+use Spatie\Permission\Models\Role as SpatieRole;
+
+
+class Role extends SpatieRole
 {
+
+    use UsesTenantConnection;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -25,18 +31,6 @@ class Role extends Model
     protected $casts = [
         ''
     ];
-
-
-    protected $fillable = [
-        'name', 'description'
-    ];
-
-    protected $table = 'roles';
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
-    }
 
  
 } ?>

@@ -21,9 +21,10 @@
                   <table class="table table-bordered" style="width: 100%; ">
                         <thead>
                             <tr>
-                                                                                                                                                              <th>Name</th>
-                                                                                                                                <th>Type</th>
+                                                                                                                                                              <th>User Number</th>
+                                                                                                                                <th>Name</th>
                                                                                                                                 <th>Email</th>
+                                                                                                                                <th>Parent Number</th>
                                                                                                                                 <th>Email Verified At</th>
                                                                                                                                 <th>Password</th>
                                                                                                                                 <th>Remember Token</th>
@@ -31,9 +32,10 @@
                         </thead>
                         <tbody >
                             <tr v-for="(user, index) in users" :key="user.id">
-                                                                                                                                                                              <td>{{ user.name }} </td>
-                                                                                                                                              <td>{{ user.type }} </td>
+                                                                                                                                                                              <td>{{ user.user_number }} </td>
+                                                                                                                                              <td>{{ user.name }} </td>
                                                                                                                                               <td>{{ user.email }} </td>
+                                                                                                                                              <td>{{ user.parent_number }} </td>
                                                                                                                                               <td>{{ user.email_verified_at }} </td>
                                                                                                                                               <td>{{ user.password }} </td>
                                                                                                                                               <td>{{ user.remember_token }} </td>
@@ -54,7 +56,7 @@
                 <!-- card header -->
                 <div class="card-header pr-sm-3">
                   <div class="d-flex mb-3">
-                    <h3 class="card-title mr-auto ">User List</h3>
+                    <h3 class="card-title mr-auto ">User List </h3>
                     <button type="button" class="btn btn-sm btn-primary " @click="newModal">
                         <i class="fa fa-plus-square"></i>
                         Add New
@@ -204,23 +206,38 @@
                               
                                                           </div>
                                                       <div class="form-group">
+                                                                <label>User number</label>
+                                  <input type="text" v-model="form.user_number" name="user_number" class="form-control" :class="{ 'is-invalid': form.errors.has( 'user_number' ) }"  maxlength="255" >
+                                                                                            </div>
+                                                      <div class="form-group">
                                                                 <label>Name</label>
                                   <input type="text" v-model="form.name" name="name" class="form-control" :class="{ 'is-invalid': form.errors.has( 'name' ) }"  maxlength="255" >
                                                                         <has-error :form="form" field="name"></has-error>
                                                                                             </div>
-                                                
                                                       <div class="form-group">
                                                                 <label>Email</label>
                                   <input type="text" v-model="form.email" name="email" class="form-control" :class="{ 'is-invalid': form.errors.has( 'email' ) }"  maxlength="255" >
                                                                         <has-error :form="form" field="email"></has-error>
                                                                                             </div>
-                                                     
+                                                      <div class="form-group">
+                                                                <label>Parent number</label>
+                                  <input type="number" v-model="form.parent_number" class="form-control" :class="{ 'is-invalid': form.errors.has( 'parent_number' ) }"></input>
+                                                                                            </div>
+                                                      <div class="form-group">
+                                                                <label>Email verified at</label>
+                                  <input type="number" v-model="form.email_verified_at" class="form-control" :class="{ 'is-invalid': form.errors.has( 'email_verified_at' ) }"></input>
+                                                                                            </div>
                                                       <div class="form-group">
                                                                 <label>Password</label>
                                   <input type="password" v-model="form.password" name="password" class="form-control" :class="{ 'is-invalid': form.errors.has( 'password' ) }"  maxlength="255" >
                                                                         <has-error :form="form" field="password"></has-error>
+                                    
+
+                                                          </div>
+                                                      <div class="form-group">
+                                                                <label>Remember token</label>
+                                  <input type="text" v-model="form.remember_token" name="remember_token" class="form-control" :class="{ 'is-invalid': form.errors.has( 'remember_token' ) }"  maxlength="100" >
                                                                                             </div>
-                                               
                                                       <div class="form-group">
                                  
                                   <input type="hidden" v-model="form.created_at"></input>
@@ -295,40 +312,94 @@
                 clickedRow: null,
                 selectedRows: [],
 
+
+                                                                                                                                                                                                                                                                                                                                                                                        
                 serverParams: {
                   columnFilters: {
                   },
                   sort: [
-                        {"type" : "asc", "field" : "name"},
-                        {"type" : "asc", "field" : "email"},
-                  ],
+                                                                                                                      {"type" : "asc",
+                          "field" : "user_number"},
+                                                                                                {"type" : "asc",
+                          "field" : "name"},
+                                                                                                {"type" : "asc",
+                          "field" : "email"},
+                                                                                                {"type" : "asc",
+                          "field" : "parent_number"},
+                                                                                                {"type" : "asc",
+                          "field" : "email_verified_at"},
+                                                                                                {"type" : "asc",
+                          "field" : "password"},
+                                                                                                {"type" : "asc",
+                          "field" : "remember_token"},
+                                                                                                                                                            ],
                   page: 1, 
                   perPage: 5,
                   searchTerm: '',
                 },   
                      
                 form: new Form({
-                      "id" : "",
-                      "name" : "",
-                      "email" : "",
-                      "created_at" : "",
-                      "updated_at" : "",
-                }),
+                                        "id" : "",
+                                        "user_number" : "",
+                                        "name" : "",
+                                        "email" : "",
+                                        "parent_number" : "",
+                                        "email_verified_at" : "",
+                                        "password" : "",
+                                        "remember_token" : "",
+                                        "created_at" : "",
+                                        "updated_at" : "",
+                                  }),
                 
                 table_heders: {
-                  "Name" : "name",
-                  "Email" : "email",
-                },
+                                                                                                  "User Number" : "user_number",
+                                                                                "Name" : "name",
+                                                                                "Email" : "email",
+                                                                                "Parent Number" : "parent_number",
+                                                                                "Email Verified At" : "email_verified_at",
+                                                                                "Password" : "password",
+                                                                                "Remember Token" : "remember_token",
+                                                                                                                                  },
 
                 columns: [ 
-                    { label : "Id", field : "id", hidden : true},
-                    { label : "Name", field : "name", hidden : false},
-                    { label : "Email", field : "email", hidden : false},                     
+                                        { label : "Id",
+                      field : "id",
+                                              hidden : true},
+                                                              { label : "User Number",
+                      field : "user_number",
+                                              hidden : false},
+                                                              { label : "Name",
+                      field : "name",
+                                              hidden : false},
+                                                              { label : "Email",
+                      field : "email",
+                                              hidden : false},
+                                                              { label : "Parent Number",
+                      field : "parent_number",
+                                              hidden : false},
+                                                              { label : "Email Verified At",
+                      field : "email_verified_at",
+                                              hidden : false},
+                                                              { label : "Password",
+                      field : "password",
+                                              hidden : false},
+                                                              { label : "Remember Token",
+                      field : "remember_token",
+                                              hidden : false},
+                                                              { label : "Created At",
+                      field : "created_at",
+                                              hidden : true},
+                                                              { label : "Updated At",
+                      field : "updated_at",
+                                              hidden : true},
+                                        
                   {
                     label: 'Actions',
                     field: 'action',
                     sortable: false,
+
                   },
+
                 ],
 
             };
@@ -565,13 +636,16 @@
 
             isSpecialColumn(field){
               if(field != 'id' && field != 'updated_at' && field != 'created_at' 
-                   && field != 'vgt_id' && field != 'vgtSelected' && field != 'originalIndex'
-                   && field != 'email_verified_at' && field != 'password' && field != 'remember_token'
-               ) 
+                   && field != 'vgt_id' && field != 'vgtSelected' && field != 'originalIndex' ) 
                     return false;
                    else
                     return true;
-            }
+            },
+
+      
+                                                                                                                                                                                                                                                                                                    
+
+
 
         },
 
@@ -580,7 +654,7 @@
             //console.log('User Component mounted.')
             this.$Progress.start();
             this.loadUsers();
-            this.$Progress.finish();
+                                                                                                                                                                                                                                                                                                                this.$Progress.finish();
 
         },
 

@@ -35,10 +35,18 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        
         if (!Gate::allows('isAdmin')) {
             return $this->unauthorizedResponse();
         }
         $this->authorize('isAdmin');
+
+        if(Str::plural($request->query('all', ''))){
+            $result = User::all();
+            return $this->sendResponse($result, 'Users list ');
+        }
+
+
 
         $page = $request->query('page', 1);
         $perPage = $request->query('perPage', '5');
@@ -49,6 +57,8 @@ class UserController extends Controller
         $model = "App\Models\Honestee\VueCodeGen\\".ucfirst($request->query('pv_tbl', ''));
         $model_id = $request->query('pv_id', '');
         $relation = Str::plural($request->query('tbl', ''));
+
+
 
         if($model_id && $relation ){ // Many to Many relationships
             $query = $model::find($model_id)->{$relation}();
@@ -125,7 +135,7 @@ class UserController extends Controller
         } else {
             $this->checkValidation($request);
             $user = User::create($request->all());    
-            return $this->sendResponse($query, 'User Created Successfully');
+            return $this->sendResponse( $user, 'User Created Successfully');
         }
 
 
@@ -143,7 +153,7 @@ class UserController extends Controller
             $max = (isset($matches[0][0])) ? (int)$matches[0][0] : false;
             $required = ($column->Null == 'NO') ? true : false ;
             if($required && $max && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
-                $validationInfo[$column->Field] = 'required|max:'.$max;
+                $validationInfo[$column->Field] = 'required';
             else if($required && $column->Field != "id" && $column->Field !="created_at" && $column->Field !="updated_at" )
                 $validationInfo[$column->Field] = 'required';
 
@@ -211,9 +221,9 @@ class UserController extends Controller
             $query = $model::find($model_id)->{$relation}()->detach( $pv_ids );
             return $this->sendResponse($query, ucfirst($relation)." were detached from the ".ucfirst( $data['pv_tbl'] )." Successfully");
         } else {
-            $idsArray = json_decode($idsStr,true);
+            $idsArray = json_decode($parameters,true);
             User::whereIn('id', $idsArray)->delete();
-            return $this->sendResponse($idsStr, "The record was deleted successfully.");
+            return $this->sendResponse($idsArray, "The record was deleted successfully.");
         }
     }
 

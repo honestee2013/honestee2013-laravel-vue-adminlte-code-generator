@@ -43,8 +43,16 @@ Route::namespace('App\\Http\\Controllers\\API\V1')->group(function () {
 });
 
 
-Route::apiResources([ 'roles' => 'App\Http\Controllers\Honestee\VueCodeGen\RoleController' ]);
+
 Route::apiResources([ 'schools' => 'App\Http\Controllers\Honestee\VueCodeGen\SchoolController' ]);
+Route::apiResources([ 'sections' => 'App\Http\Controllers\Honestee\VueCodeGen\SectionController' ]);
+Route::apiResources([ 'classrooms' => 'App\Http\Controllers\Honestee\VueCodeGen\ClassroomController' ]);
+Route::apiResources([ 'subjects' => 'App\Http\Controllers\Honestee\VueCodeGen\SubjectController' ]);
+Route::apiResources([ 'departments' => 'App\Http\Controllers\Honestee\VueCodeGen\DepartmentController' ]);
+Route::apiResources([ 'assessments' => 'App\Http\Controllers\Honestee\VueCodeGen\AssessmentController' ]);
+Route::apiResources([ 'parts' => 'App\Http\Controllers\Honestee\VueCodeGen\PartController' ]);
+Route::apiResources([ 'codes' => 'App\Http\Controllers\Honestee\VueCodeGen\CodeController' ]);
+Route::apiResources([ 'roles' => 'App\Http\Controllers\Honestee\VueCodeGen\RoleController' ]);
+Route::apiResources([ 'permissions' => 'App\Http\Controllers\Honestee\VueCodeGen\PermissionController' ]);
 Route::apiResources([ 'users' => 'App\Http\Controllers\Honestee\VueCodeGen\UserController' ]);
-Route::apiResources([ 'role-users' => 'App\Http\Controllers\Honestee\VueCodeGen\RoleUserController' ]);
-Route::apiResources([ 'user-roles' => 'App\Http\Controllers\Honestee\VueCodeGen\RoleUserController' ]);
+Route::apiResources([ 'options' => 'App\Http\Controllers\Honestee\VueCodeGen\OptionController' ]);

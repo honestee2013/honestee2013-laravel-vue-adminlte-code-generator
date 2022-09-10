@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+//use Spatie\Multitenancy\Exceptions\NoCurrentTenant;
+use Illuminate\Contracts\Container\BindingResolutionException;
+
 
 class Handler extends ExceptionHandler
 {
@@ -32,6 +35,13 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        //
+        // Throws Illuminate\Contracts\Container\BindingResolutionException;
+        // To avoid wrong subdomain tenant database table fatal errors
+        $this->reportable(function (BindingResolutionException $e) {
+            exit('<br /><br />
+                <div style="color:red; font-weight: bold; font-size:1.2em">ERROR!</div><hr />
+                <div><h3>Please, check your school address. IT SEEMS WRONG!</h3> <p> Exception: NoCurrentTenant </p> </div>
+            ');
+        });
     }
 }
