@@ -17,15 +17,15 @@ class CreateCodesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('role_id')->unsigned();
 
-            $table->enum('type', ['Pin Code','Token Code']);
-            $table->enum('use', ['User Registration', 'Student Result Check']);
-            $table->enum('expire', ['After One Week', 'After One Month', 'After Three Months']);
-            $table->enum('number_of_use', ['Once', 'Twice', 'Trice', 'Four Times', 'Five Times']);
+            $table->enum('code_type', ['Pin','Token']);
+            $table->enum('use_for', ['User registration', 'Student result check']);
+            $table->enum('expire_time', ['After one week', 'After one month']);
+            $table->enum('maximum_use', ['One time', 'Three times', 'Five times']);
 
             $table->bigInteger('used_by')->unsigned()->nullable()->unique(); // User id
-            $table->bigInteger('used_times')->unsigned()->nullable();
+            $table->bigInteger('no_of_use')->unsigned()->nullable();
 
-            $table->string('value')->unique();
+            $table->string('value')->unique()->nullable();
 
             $table->timestamps();
         });

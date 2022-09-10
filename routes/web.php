@@ -19,7 +19,6 @@ use  Spatie\Multitenancy\Landlord;
 //use DB;
 
 
-
 use Spatie\Multitenancy\Models\Tenant;
 //use Option;
 
@@ -31,10 +30,10 @@ use Spatie\Multitenancy\Models\Tenant;
 
        //exit( json_encode(Tenant::orderBy('created_at', 'desc')->first() ) );
 
+//exit(json_encode(Auth::user()->roles));
 
-
-    if(!Tenant::current())      
-        abort("404");
+    //if(!Tenant::current())      
+        //abort("404");
 
     // routes
     Route::get('/', function () {
@@ -43,6 +42,9 @@ use Spatie\Multitenancy\Models\Tenant;
     
 
     Auth::routes(['verify' => true]);
+
+
+
 
 
 

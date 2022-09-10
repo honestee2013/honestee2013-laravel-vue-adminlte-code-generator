@@ -56,3 +56,7 @@ Route::apiResources([ 'roles' => 'App\Http\Controllers\Honestee\VueCodeGen\RoleC
 Route::apiResources([ 'permissions' => 'App\Http\Controllers\Honestee\VueCodeGen\PermissionController' ]);
 Route::apiResources([ 'users' => 'App\Http\Controllers\Honestee\VueCodeGen\UserController' ]);
 Route::apiResources([ 'options' => 'App\Http\Controllers\Honestee\VueCodeGen\OptionController' ]);
+
+Route::apiResources([ 'app-permissions' => 'App\Http\Controllers\Honestee\VueCodeGen\AppPermissionController' ]);
+
+
