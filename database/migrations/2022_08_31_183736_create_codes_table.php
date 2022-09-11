@@ -16,16 +16,19 @@ class CreateCodesTable extends Migration
         Schema::create('codes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('role_id')->unsigned();
+            $table->string('user_type');
 
             $table->enum('code_type', ['Pin','Token']);
             $table->enum('use_for', ['User registration', 'Student result check']);
             $table->enum('expire_time', ['After one week', 'After one month']);
-            $table->enum('maximum_use', ['One time', 'Three times', 'Five times']);
+            $table->enum('maximum_use', [1, 3, 5]);
 
             $table->bigInteger('used_by')->unsigned()->nullable()->unique(); // User id
-            $table->bigInteger('no_of_use')->unsigned()->nullable();
+            $table->bigInteger('number_of_use')->unsigned()->nullable();
 
-            $table->string('value')->unique()->nullable();
+            $table->string('value')->nullable();
+            $table->string('expiry_date')->nullable();
+            $table->string('status')->nullable();
 
             $table->timestamps();
         });

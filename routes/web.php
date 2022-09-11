@@ -22,6 +22,8 @@ use  Spatie\Multitenancy\Landlord;
 use Spatie\Multitenancy\Models\Tenant;
 //use Option;
 
+//exit(App\Models\Honestee\VueCodeGen\Role::find(1)->name);
+
 //DB::table('options')->get();
 //exit(json_encode(  App\Models\Honestee\VueCodeGen\Option::all() ) );
         // Throws Illuminate\Contracts\Container\BindingResolutionException;

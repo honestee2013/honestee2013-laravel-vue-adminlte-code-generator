@@ -10,7 +10,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
 
 use App\Models\Honestee\VueCodeGen\Code;
+use App\Models\Honestee\VueCodeGen\Role;
 
+use Carbon\Carbon;
 
 use DB;
 use Str;
@@ -104,6 +106,40 @@ class CodeController extends Controller
      */
     public function store(Request $request)
     {
+
+        $qnt = $request["quantity"];
+        $codeType = $request["code_type"];
+        $expireTime = $request["expire_time"];
+        $expiryDate = $this->generateExpiryDate($expireTime);
+        $maximumUse = $request["maximum_use"];
+        $useFor = $request["use_for"];
+        $no_of_use = $request["number_of_use"];
+        $roleId = $request["role_id"]; // staff
+        $roleName = Role::find($roleId)->name;
+
+        for($i=0; $i<$qnt; $i++){
+            $code = $this->generateCodeValue($codeType);
+
+            Code::insert([
+                "role_id" => $roleId,
+                "user_type" => $roleName,
+                "code_type" => $codeType,
+                "use_for" => $useFor,
+                "expire_time" => $expireTime,
+                "expiry_date" => $expiryDate,
+                "maximum_use" => $maximumUse,
+                "value" => $code,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        }
+      
+
+        return $this->sendResponse( null, $qnt.' '.$codeType.'s was generated successfully');
+
+
+
         // ******* Using attach *********
         //$user->tasks()->getRelatedIds(); // [1,2,3,4,5,6]
         //$user->tasks()->attach([5,6,7]);
@@ -123,7 +159,7 @@ class CodeController extends Controller
         // *****************************
 
 
-        $model = "App\Models\Honestee\VueCodeGen\\".ucfirst($request->query('pv_tbl', ''));
+        /*$model = "App\Models\Honestee\VueCodeGen\\".ucfirst($request->query('pv_tbl', ''));
         $model_id = $request->query('pv_id', '');
         $pv_ids = $request->query('pv_ids', '');
         $relation = Str::plural($request->query('tbl', ''));
@@ -135,10 +171,46 @@ class CodeController extends Controller
             $this->checkValidation($request);
             $code = Code::create($request->all());    
             return $this->sendResponse( $code, 'Code Created Successfully');
-        }
+        }*/
 
 
      }
+
+
+
+     public function generateCodeValue($type){
+        if($type == "Token")
+            return $this->randomAlphanumericCode();
+        else if($type == "Pin")
+            return $this->randomNumericCode();
+     }
+
+
+    public function randomAlphanumericCode($stringLength = 12) {
+        // random_bytes returns number of bytes
+        // bin2hex converts them into hexadecimal format
+        return substr(bin2hex(random_bytes($stringLength)), 0, $stringLength);
+    }
+
+
+    public function randomNumericCode($numberLength = 8) {
+        //Generate a random number using the rand function.
+        $min = intval(str_pad(1, $numberLength, '0', STR_PAD_RIGHT)); 
+        $max = intval(str_pad(9, $numberLength, '9', STR_PAD_RIGHT));
+        $number = random_int($min, $max);
+        return $number;
+    }
+
+
+
+     public function generateExpiryDate($expireTime){
+        $days = 7;
+        if($expireTime == "After one month")
+            $days = 30;
+        $currentDateTime = Carbon::now();
+        return $newDateTime = Carbon::now()->addDays($days);
+     }
+
 
 
 
@@ -190,11 +262,53 @@ class CodeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->checkValidation($request);
+        /*$this->checkValidation($request);
         $code = Code::findOrFail($id);
         $input = $request->all();
         $code->fill($input)->save();
-        return $this->sendResponse($code, 'Code Information has been updated');
+        return $this->sendResponse($code, 'Code Information has been updated');*/
+
+
+
+
+        $qnt = $request["quantity"];
+        $codeType = $request["code_type"];
+        $expireTime = $request["expire_time"];
+        $expiryDate = $this->generateExpiryDate($expireTime);
+        $maximumUse = $request["maximum_use"];
+        $useFor = $request["use_for"];
+        $no_of_use = $request["number_of_use"];
+        $roleId = $request["role_id"]; // staff
+        $roleName = Role::find($roleId)->name;
+
+        for($i=0; $i<$qnt; $i++){
+            $code = $this->generateCodeValue($codeType);
+
+            Code::insert([
+                "role_id" => $roleId,
+                "user_type" => $roleName,
+                "code_type" => $codeType,
+                "use_for" => $useFor,
+                "expire_time" => $expireTime,
+                "expiry_date" => $expiryDate,
+                "maximum_use" => $maximumUse,
+                "value" => $code,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        }
+      
+        $code = Code::findOrFail($id);
+        $input = $request->all();
+        $code->fill($input)->save();
+        return $this->sendResponse( null, $qnt.' '.$codeType.'s was updated successfully');
+
+
+
+
+
+
     }
 
     /**

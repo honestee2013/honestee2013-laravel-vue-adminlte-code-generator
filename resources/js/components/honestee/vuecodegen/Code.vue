@@ -11,25 +11,23 @@
           <table class="table table-bordered" style="width: 100%; ">
             <thead>
               <tr>
-                <th>Role Id</th>
-                <th>Type</th>
-                <th>Use</th>
-                <th>Expire</th>
-                <th>Number Of Use</th>
-                <th>Used By</th>
-                <th>Used Times</th>
+                <th>Code type</th>
+                <th>Use for</th>
+                <th>Expiry date</th>
+                <th>Number of use</th>
+                <th>Used by</th>
+                <th>Maximum use</th>
                 <th>Value</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(code, index) in codes" :key="code.id">
-                <td>{{ code.role_id }} </td>
-                <td>{{ code.type }} </td>
-                <td>{{ code.use }} </td>
-                <td>{{ code.expire }} </td>
+                <td>{{ code.code_type }} </td>
+                <td>{{ code.use_for }} </td>
+                <td>{{ code.expiry_date }} </td>
                 <td>{{ code.number_of_use }} </td>
                 <td>{{ code.used_by }} </td>
-                <td>{{ code.used_times }} </td>
+                <td>{{ code.maximum_use }} </td>
                 <td>{{ code.value }} </td>
               </tr>
             </tbody>
@@ -199,14 +197,16 @@
                 <label>User type</label>
                 <select v-model="form.role_id" name="role_id" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'role_id' ) }">
-                  <option v-for="(item, index)  in roles" :key="index" :value="item.id"> {{item.name}} </option>
+                  <option v-for="(item, index)  in roles" :key="index" :value="item.id"> 
+                      {{ (item.name.charAt(0).toUpperCase() + item.name.slice(1)).replaceAll("-", " ") }} 
+                  </option>
                 </select>
                 <has-error :form="form" field="role_id"></has-error>
 
               </div>
               <div class="form-group">
                 <label>Code type</label>
-                <select v-model="form.type" name="type" class="form-control"
+                <select v-model="form.code_type" name="type" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'type' ) }">
                   <option value="Pin">Pin</option>
                   <option value="Token">Token</option>
@@ -216,7 +216,7 @@
               </div>
               <div class="form-group">
                 <label>Use for</label>
-                <select v-model="form.use" name="use" class="form-control"
+                <select v-model="form.use_for" name="use" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'use' ) }">
                   <option> User registration </option>
                   <option> Student result check </option>
@@ -226,7 +226,7 @@
               </div>
               <div class="form-group">
                 <label>Expiry time</label>
-                <select v-model="form.expire" name="expire" class="form-control"
+                <select v-model="form.expire_time" name="expire" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'expire' ) }">
                   <option> After one week </option>
                   <option> After one month </option>
@@ -236,7 +236,7 @@
               </div>
               <div class="form-group">
                 <label>Max no. of use</label>
-                <select v-model="form.number_of_use" name="number_of_use" class="form-control"
+                <select v-model="form.maximum_use" name="maximum_use" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'number_of_use' ) }">
                   <option value="1">One time</option>
                   <option value="3">Three times</option>
@@ -246,13 +246,13 @@
 
               </div>
               <div class="form-group" v-show="editmode">
-                <label>Used by</label>
-                <input type="number" v-model="form.used_by" class="form-control"
+                <label>Used by (User number)</label>
+                <input type="text" v-model="form.used_by" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'used_by' ) }"></input>
               </div>
               <div class="form-group" v-show="editmode">
                 <label>Used times</label>
-                <input type="number" v-model="form.used_times" class="form-control"
+                <input type="number" v-model="form.number_of_use" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'used_times' ) }"></input>
               </div>
               <div class="form-group" v-show="editmode">
@@ -264,7 +264,7 @@
 
 
 
-              <div class="form-group">
+              <div class="form-group" v-show="!editmode">
                 <label>Quantity</label>
                 <select v-model="form.quantity" name="number_of_use" class="form-control"
                   :class="{ 'is-invalid': form.errors.has( 'quantity' ) }">
@@ -367,15 +367,19 @@ export default {
 
           {
             "type": "asc",
-            "field": "type"
+            "field": "code_type"
           },
           {
             "type": "asc",
-            "field": "use"
+            "field": "use_for"
           },
           {
             "type": "asc",
-            "field": "expire"
+            "field": "user_type"
+          },
+          {
+            "type": "asc",
+            "field": "expire_time"
           },
           {
             "type": "asc",
@@ -387,7 +391,7 @@ export default {
           },
           {
             "type": "asc",
-            "field": "used_times"
+            "field": "maximum_use"
           },
           {
             "type": "asc",
@@ -402,25 +406,27 @@ export default {
       form: new Form({
         "id": "",
         "role_id": 9,
-        "type": "Token",
-        "use": "User registration",
-        "expire": "After one week",
-        "number_of_use": 3,
-        "quantity": 50,
+        "code_type": "Token",
+        "use_for": "User registration",
+        "expire_time": "After one week",
+        "maximum_use": 5,
+        "quantity": 5,
         "used_by": "",
-        "used_times": "",
+        "number_of_use" : "",
         "value": "",
         "created_at": "",
         "updated_at": "",
       }),
 
       table_heders: {
-        "Type": "type",
-        "Use": "use",
-        "Expire": "expire",
+        "Code type": "code_type",
+        "Use for": "use_for",
+        "User type": "user_type",
+        "Expire time": "expire_time",
+        "Expiry date": "expiry_date",
         "Number Of Use": "number_of_use",
         "Used By": "used_by",
-        "Used Times": "used_times",
+        "Maximum use": "maximum_use",
         "Value": "value",
       },
 
@@ -428,23 +434,33 @@ export default {
 
 
         {
-          label: "Type",
-          field: "type",
+          label: "Code type",
+          field: "code_type",
           hidden: false
         },
         {
-          label: "Use",
-          field: "use",
+          label: "Use for",
+          field: "use_for",
           hidden: false
         },
         {
-          label: "Expire",
-          field: "expire",
+          label: "User type",
+          field: "user_type",
           hidden: false
         },
         {
-          label: "Number Of Use",
-          field: "number_of_use",
+          label: "Expire time",
+          field: "expire_time",
+          hidden: false
+        },
+        {
+          label: "Expiry date",
+          field: "expiry_date",
+          hidden: false
+        },
+        {
+          label: "Maximum  use",
+          field: "maximum_use",
           hidden: false
         },
         {
@@ -453,8 +469,8 @@ export default {
           hidden: false
         },
         {
-          label: "Used Times",
-          field: "used_times",
+          label: "Number of use",
+          field: "number_of_use",
           hidden: false
         },
         {
@@ -715,7 +731,7 @@ export default {
 
 
     isSpecialColumn(field) {
-      if (field != 'id' && field != 'updated_at' && field != 'created_at'
+      if (field.indexOf('id') < 0 && field != 'updated_at' && field != 'created_at'
         && field != 'vgt_id' && field != 'vgtSelected' && field != 'originalIndex')
         return false;
       else
