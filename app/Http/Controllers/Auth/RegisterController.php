@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 //use App\Models\User;
 use App\Models\Honestee\VueCodeGen\User;
 //use App\Models\Honestee\VueCodeGen\Role;
+use App\Models\Honestee\VueCodeGen\Code;
+
 use Spatie\Permission\Models\Role;
 
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -70,7 +72,7 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
 
-        if($data['role'] = "school_owner")
+        if($data['role'] = "school-owner")
             $fields['website'] = 'unique:Spatie\Multitenancy\Models\Tenant,database';
 
         return Validator::make($data, $fields);
@@ -86,25 +88,47 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $role = $data['role'];
-        if($role == 'school-owner')
+        $roleName = $data['role'];
+        if($roleName == 'school-owner')
             $this->createTenantInfo($data['website']);
-        else
-            $role == Code::were("value", $data['pincode']);
+        else{
+            $code = Code::where("value", $data['pincode'])->first();
+            $this->exitForInvalidCode($code);
+
+            $roleName = $code->user_type;
+
+        }
+            //$roleName == Code::where("value", $data['pincode'])->get("user_type")->pluck("user_type")[0];
+            $code = Code::where("value", $data['pincode'])->first();
+
+            exit(json_encode(Code::where("value", $data['pincode'])->first()->user_type ));
+
+        if($roleName == "user")
+            exit("<h4>Invalid registration code!</h4>");
+
 
         $userData = [
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'user_number' => $this->createUserNumber($role),
+            'user_number' => $this->createUserNumber($roleName),
         ];
 
         $user = User::create($userData);
 
         // Assigning Role by default user role
-        $role = Role::where('name', $data['role'])->first();
-        $user->assignRole($role);
-        
+        $role = Role::where('name', $roleName)->first();
+        //$user->assignRole($role);
+        $user->roles()->sync($role->id); // ok
+
+        if( strpos($role, "student") > -1 || strpos($role, "prefect") > -1 || strpos($role, "class-head") > -1)
+            $user->roles()->sync(  Role::where('name', "student")->first()->id );
+        else if( strpos($role, "parent") )
+            $user->roles()->sync(  Role::where('name', "parent")->first()->id );
+        else
+            $user->roles()->sync(  Role::where('name', "staff")->first()->id );
+
+
         //$userNumber = $this->createUserNumber('STA'); // For staff
         //$user->update(['user_number', $userNumber]);
 
@@ -142,6 +166,23 @@ class RegisterController extends Controller
         // $user->assignRole($role);
 
         return $user;
+    }
+
+
+    protected function exitForInvalidCode($code){
+
+        if(!$code)
+            exit("<h4>Invalid code!</h4>");
+
+        $expiryDate = new \DateTime($code->expiry_date);
+        
+        if($code->use_for != "User registration")
+            exit("<h4>This code is for ".$code->use_for.", not for registration!</h4>");
+        else if(now() > $expiryDate )
+            exit("<h4>This code has reached its expiring date: ".$expiryDate->format('Y-m-d H:i:s')."</h4>");
+        else if( $code->number_of_use >= $code->maximum_use)
+            exit("<h4>This code has reached its maximum use of ".$code->maximum_use." times!</h4>");
+
     }
 
 
